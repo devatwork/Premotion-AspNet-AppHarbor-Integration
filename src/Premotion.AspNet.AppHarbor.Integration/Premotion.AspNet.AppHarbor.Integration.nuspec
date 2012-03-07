@@ -4,16 +4,17 @@
 		<version>0.1.0</version>
 		<authors>Premotion Software Solutions</authors>
 		<owners>Premotion Software Solutions</owners>
+		<projectUrl>https://github.com/trilobyte/Premotion-AspNet-AppHarbor-Integration</projectUrl>
 		<id>Premotion.AspNet.AppHarbor.Integration</id>
 		<title>Premotion AspNet AppHarbor Integration</title>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>Provides environment ingorance for AppHarbor hosted ASP.NET applications.</description>
+		<description>This module modifies the native System.Web.HttpContext to make ASP.NET agnostic of the AppHarbor load balancing setup. You no longer need to worry about port numbers, secure connections and eaten remote IP addresses.</description>
 		<frameworkAssemblies>
 			<frameworkAssembly assemblyName="System" targetFramework="net40" />
 			<frameworkAssembly assemblyName="System.Core" targetFramework="net40" />
 			<frameworkAssembly assemblyName="System.Web" targetFramework="net40" />
 		</frameworkAssemblies>
-		<releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+		<releaseNotes>Initial alpha release</releaseNotes>
 		<copyright>Copyright © 2012 Premotion Software Solutions and contributors.</copyright>
 		<dependencies></dependencies>
 		<tags>Premotion AspNet AppHarbor Integration</tags>
