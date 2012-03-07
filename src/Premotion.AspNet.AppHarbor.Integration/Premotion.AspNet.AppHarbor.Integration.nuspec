@@ -16,7 +16,6 @@
 		</frameworkAssemblies>
 		<releaseNotes>Initial alpha release</releaseNotes>
 		<copyright>Copyright © 2012 Premotion Software Solutions and contributors.</copyright>
-		<dependencies></dependencies>
 		<tags>Premotion AspNet AppHarbor Integration</tags>
 	</metadata>
 	<files>
