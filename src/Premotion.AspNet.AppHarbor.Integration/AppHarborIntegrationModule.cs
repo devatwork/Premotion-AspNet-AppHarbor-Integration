@@ -25,7 +25,7 @@ namespace Premotion.AspNet.AppHarbor.Integration
 		/// <summary>
 		/// AppHarbor uses an loadbalancer which rewrites the SERVER_PROTOCOL header. The original protocol is stored in a separate header with this name.
 		/// </summary>
-		private const string ForwardedProtocolHeaderName = "X-Forwarded-Proto";
+		private const string ForwardedProtocolHeaderName = "HTTP_X_FORWARDED_PROTO";
 		#endregion
 		#region Implementation of IHttpModule
 		/// <summary>
