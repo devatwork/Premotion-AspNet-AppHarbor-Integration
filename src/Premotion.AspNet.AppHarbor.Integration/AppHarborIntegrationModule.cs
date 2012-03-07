@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Specialized;
+using System.Configuration;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Web;
@@ -19,6 +20,10 @@ namespace Premotion.AspNet.AppHarbor.Integration
 	{
 		#region Constants
 		/// <summary>
+		/// Defines the name of the module enabled setting.
+		/// </summary>
+		private const string ModuleEnabledSettingKey = "DOCKED_AT_APPHARBOR";
+		/// <summary>
 		/// AppHarbor uses an loadbalancer which rewrites the REMOTE_ADDR header. The original user's IP addres is stored in a separate header with this name.
 		/// </summary>
 		private const string ForwardedUserHostAddressHeaderName = "HTTP_X_FORWARDED_FOR";
@@ -34,6 +39,11 @@ namespace Premotion.AspNet.AppHarbor.Integration
 		/// <param name="context">An <see cref="T:System.Web.HttpApplication"/> that provides access to the methods, properties, and events common to all application objects within an ASP.NET application </param>
 		public void Init(HttpApplication context)
 		{
+			// check if the library is enabled or not
+			var isEnabled = ConfigurationManager.AppSettings[ModuleEnabledSettingKey];
+			if (!"true".Equals(isEnabled, StringComparison.OrdinalIgnoreCase))
+				return;
+
 			// find the server variables collection accessor methods
 			const BindingFlags bindingFlags = BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public;
 			var serverVariablesCollectionType = Type.GetType("System.Web.HttpServerVarsCollection, System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a");
