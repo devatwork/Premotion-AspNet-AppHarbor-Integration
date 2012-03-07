@@ -26,11 +26,17 @@ namespace Premotion.AspNet.AppHarbor.Integration
 		/// <summary>
 		/// AppHarbor uses an loadbalancer which rewrites the REMOTE_ADDR header. The original user's IP addres is stored in a separate header with this name.
 		/// </summary>
-		private const string ForwardedUserHostAddressHeaderName = "HTTP_X_FORWARDED_FOR";
+		private const string ForwardedForHeaderName = "HTTP_X_FORWARDED_FOR";
 		/// <summary>
 		/// AppHarbor uses an loadbalancer which rewrites the SERVER_PROTOCOL header. The original protocol is stored in a separate header with this name.
 		/// </summary>
+		/// <remarks>http://en.wikipedia.org/wiki/X-Forwarded-For</remarks>
 		private const string ForwardedProtocolHeaderName = "HTTP_X_FORWARDED_PROTO";
+		/// <summary>
+		/// Defines the separator which to use to split the Forwarded for header.
+		/// </summary>
+		/// <remarks>http://en.wikipedia.org/wiki/X-Forwarded-For</remarks>
+		private static readonly string[] ForwardedForAddressesSeparator = new[] {", "};
 		#endregion
 		#region Implementation of IHttpModule
 		/// <summary>
@@ -77,12 +83,17 @@ namespace Premotion.AspNet.AppHarbor.Integration
 			                        	var serverVariables = HttpContext.Current.Request.ServerVariables;
 
 			                        	// get the forwarder headers
-			                        	var userHostAddress = serverVariables[ForwardedUserHostAddressHeaderName];
-			                        	var protocol = serverVariables[ForwardedProtocolHeaderName];
+			                        	var forwardedFor = serverVariables[ForwardedForHeaderName] ?? string.Empty;
+			                        	var protocol = serverVariables[ForwardedProtocolHeaderName] ?? string.Empty;
 			                        	var isHttps = "HTTPS".Equals(protocol, StringComparison.OrdinalIgnoreCase);
 
+			                        	// split the forwarded for header by comma+space separated list of IP addresses, the left-most being the farthest downstream client
+			                        	// see http://en.wikipedia.org/wiki/X-Forwarded-For
+			                        	var forwardedForAdresses = forwardedFor.Split(ForwardedForAddressesSeparator, StringSplitOptions.RemoveEmptyEntries);
+			                        	if (forwardedForAdresses.Length > 0)
+			                        		setServerVariable(serverVariables, "REMOTE_ADDR", forwardedForAdresses[0]);
+
 			                        	// set correct headers
-			                        	setServerVariable(serverVariables, "REMOTE_ADDR", userHostAddress);
 			                        	setServerVariable(serverVariables, "HTTPS", isHttps ? "on" : "off");
 			                        	setServerVariable(serverVariables, "SERVER_PORT", isHttps ? "443" : "80");
 			                        	setServerVariable(serverVariables, "SERVER_PORT_SECURE", isHttps ? "1" : "0");
