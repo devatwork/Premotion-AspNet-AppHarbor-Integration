@@ -69,7 +69,7 @@ namespace Premotion.AspNet.AppHarbor.Integration
 			                        	// get the forwarder headers
 			                        	var userHostAddress = serverVariables[ForwardedUserHostAddressHeaderName];
 			                        	var protocol = serverVariables[ForwardedProtocolHeaderName];
-			                        	var isHttps = "HTTPS".Equals(protocol);
+			                        	var isHttps = "HTTPS".Equals(protocol, StringComparison.OrdinalIgnoreCase);
 
 			                        	// set correct headers
 			                        	setServerVariable(serverVariables, "REMOTE_ADDR", userHostAddress);
