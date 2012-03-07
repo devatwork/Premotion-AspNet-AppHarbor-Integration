@@ -74,7 +74,8 @@ namespace Premotion.AspNet.AppHarbor.Integration
 			                        	// set correct headers
 			                        	setServerVariable(serverVariables, "REMOTE_ADDR", userHostAddress);
 			                        	setServerVariable(serverVariables, "HTTPS", isHttps ? "on" : "off");
-			                        	setServerVariable(serverVariables, "port", isHttps ? "443" : "80");
+			                        	setServerVariable(serverVariables, "SERVER_PORT", isHttps ? "443" : "80");
+			                        	setServerVariable(serverVariables, "SERVER_PORT_SECURE", isHttps ? "1" : "0");
 			                        };
 		}
 		/// <summary>
