@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Premotion.AspNet.AppHarbor.Integration.TestWebsite", "Premotion.AspNet.AppHarbor.Integration.TestWebsite\Premotion.AspNet.AppHarbor.Integration.TestWebsite.csproj", "{C032473C-DD62-4A9D-B8ED-EF503C4651D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Premotion.AspNet.AppHarbor.Integration", "Premotion.AspNet.AppHarbor.Integration\Premotion.AspNet.AppHarbor.Integration.csproj", "{FA96CBDF-E8C4-494E-BEB8-A4941C4D4E34}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C032473C-DD62-4A9D-B8ED-EF503C4651D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C032473C-DD62-4A9D-B8ED-EF503C4651D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C032473C-DD62-4A9D-B8ED-EF503C4651D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C032473C-DD62-4A9D-B8ED-EF503C4651D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA96CBDF-E8C4-494E-BEB8-A4941C4D4E34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA96CBDF-E8C4-494E-BEB8-A4941C4D4E34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA96CBDF-E8C4-494E-BEB8-A4941C4D4E34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA96CBDF-E8C4-494E-BEB8-A4941C4D4E34}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,28 @@
+﻿<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+	<metadata>
+		<version>0.1.0</version>
+		<authors>Premotion Software Solutions</authors>
+		<owners>Premotion Software Solutions</owners>
+		<id>Premotion.AspNet.AppHarbor.Integration</id>
+		<title>Premotion AspNet AppHarbor Integration</title>
+		<requireLicenseAcceptance>false</requireLicenseAcceptance>
+		<description>Provides environment ingorance for AppHarbor hosted ASP.NET applications.</description>
+		<frameworkAssemblies>
+			<frameworkAssembly assemblyName="System" targetFramework="net40" />
+			<frameworkAssembly assemblyName="System.Core" targetFramework="net40" />
+			<frameworkAssembly assemblyName="System.Web" targetFramework="net40" />
+		</frameworkAssemblies>
+		<releaseNotes>Summary of changes made in this release of the package.</releaseNotes>
+		<copyright>Copyright © 2012 Premotion Software Solutions and contributors.</copyright>
+		<dependencies></dependencies>
+		<tags>Premotion AspNet AppHarbor Integration</tags>
+	</metadata>
+	<files>
+		<file src="bin\Premotion.AspNet.AppHarbor.Integration.dll" target="lib\net40" />
+		<file src="bin\Premotion.AspNet.AppHarbor.Integration.pdb" target="lib\net40" />
+		<file src="bin\Premotion.AspNet.AppHarbor.Integration.XML" target="lib\net40" />
+		<file src="**\*.cs" target="src" />
+		<file src="web.config.transform" target="content" />
+	</files>
+</package>

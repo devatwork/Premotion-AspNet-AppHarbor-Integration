@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<configuration>
+	<system.webServer>
+		<modules>
+			<remove name="AspNetAppHarborIntegration" />
+			<add name="AspNetAppHarborIntegration" type="Premotion.AspNet.AppHarbor.Integration.AppHarborIntegrationModule, Premotion.AspNet.AppHarbor.Integration" />
+		</modules>
+	</system.webServer>
+</configuration>
