@@ -20,9 +20,9 @@ namespace Premotion.AspNet.AppHarbor.Integration
 	{
 		#region Constants
 		/// <summary>
-		/// Defines the name of the module enabled setting.
+		/// Defines the name of the setting which to use to detect AppHarbor.
 		/// </summary>
-		private const string ModuleEnabledSettingKey = "DOCKED_AT_APPHARBOR";
+		private const string AppHarborDetectionSettingKey = "appharbor.commit_id";
 		/// <summary>
 		/// AppHarbor uses an loadbalancer which rewrites the REMOTE_ADDR header. The original user's IP addres is stored in a separate header with this name.
 		/// </summary>
@@ -45,8 +45,8 @@ namespace Premotion.AspNet.AppHarbor.Integration
 		/// <param name="context">An <see cref="T:System.Web.HttpApplication"/> that provides access to the methods, properties, and events common to all application objects within an ASP.NET application </param>
 		public void Init(HttpApplication context)
 		{
-			// check if the library is enabled or not
-			var isEnabled = ConfigurationManager.AppSettings[ModuleEnabledSettingKey];
+			// check if the application is not deployed on AppHarbor, in that case: do noting
+			var isEnabled = ConfigurationManager.AppSettings[AppHarborDetectionSettingKey];
 			if (!"true".Equals(isEnabled, StringComparison.OrdinalIgnoreCase))
 				return;
 

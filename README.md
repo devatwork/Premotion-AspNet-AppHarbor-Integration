@@ -9,13 +9,16 @@ This library fixes the following issues for you automagically:
 * [http://support.appharbor.com/kb/getting-started/information-about-our-load-balancer](http://support.appharbor.com/kb/getting-started/information-about-our-load-balancer)
 
 ## Configuration
-To set up the module properly for both local development and production add the following application setting to your web.config:
+To set up the module properly add the following module to your web.config:
 
-	<appSettings>
-		<add key="DOCKED_AT_APPHARBOR" value="false" />
-	</appSettings>
+	<system.webServer>
+		<modules>
+			<remove name="AspNetAppHarborIntegration" />
+			<add name="AspNetAppHarborIntegration" type="Premotion.AspNet.AppHarbor.Integration.AppHarborIntegrationModule, Premotion.AspNet.AppHarbor.Integration" />
+		</modules>
+	</system.webServer>
 
-Then on the AppHarbor create an configuration variable with the key DOCKED\_AT\_APPHARBOR with value set to 'true'. See [Managing environments](http://support.appharbor.com/kb/getting-started/managing-environments "Managing environments") pages for more detail.
+Please note that this might already be done automagically when you installed the library from NuGet.
 
 ## Contributors
 
