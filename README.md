@@ -31,3 +31,6 @@ Copyright © 2012 Premotion Software Solutions and contributors.
 ## License
 
 Premotion AspNet AppHarbor Integration is licensed under [MIT](http://www.opensource.org/licenses/mit-license.php "Read more about the MIT license form"). Refer to license.txt for more information.
+
+## Download
+You can download the compiled binary from NuGet: [http://nuget.org/packages/Premotion.AspNet.AppHarbor.Integration](http://nuget.org/packages/Premotion.AspNet.AppHarbor.Integration)
