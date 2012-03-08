@@ -46,8 +46,8 @@ namespace Premotion.AspNet.AppHarbor.Integration
 		public void Init(HttpApplication context)
 		{
 			// check if the application is not deployed on AppHarbor, in that case: do noting
-			var isEnabled = ConfigurationManager.AppSettings[AppHarborDetectionSettingKey];
-			if (!"true".Equals(isEnabled, StringComparison.OrdinalIgnoreCase))
+			var appHarborCommitId = ConfigurationManager.AppSettings[AppHarborDetectionSettingKey];
+			if (string.IsNullOrEmpty(appHarborCommitId))
 				return;
 
 			// find the server variables collection accessor methods
