@@ -1,14 +1,21 @@
 ﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
-		<version>0.2.0</version>
+		<version>0.3.0</version>
 		<authors>Premotion Software Solutions and contributors</authors>
 		<owners>Premotion Software Solutions and contributors</owners>
 		<projectUrl>https://github.com/trilobyte/Premotion-AspNet-AppHarbor-Integration</projectUrl>
 		<id>Premotion.AspNet.AppHarbor.Integration</id>
 		<title>Premotion AspNet AppHarbor Integration</title>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
-		<description>This module modifies the native System.Web.HttpContext to make ASP.NET agnostic of the AppHarbor load balancing setup. You no longer need to worry about port numbers, secure connections and eaten remote IP addresses.</description>
+		<description>
+			This module modifies the native HttpContext to hide the AppHarbor load balancing setup from ASP.NET.
+			You no longer need to worry about port numbers, secure connections and eaten remote IP addresses.
+
+			The following work-arounds will no longer be needed:
+			http://support.appharbor.com/kb/getting-started/workaround-for-generating-absolute-urls-without-port-number
+			http://support.appharbor.com/kb/getting-started/information-about-our-load-balancer
+		</description>
 		<frameworkAssemblies>
 			<frameworkAssembly assemblyName="System" targetFramework="net40" />
 			<frameworkAssembly assemblyName="System.Configuration" targetFramework="net40" />
@@ -16,9 +23,9 @@
 			<frameworkAssembly assemblyName="System.Web" targetFramework="net40" />
 		</frameworkAssemblies>
 		<releaseNotes>
-			* Fixed an exception when the server variables collection is not read-only
-			* Renamed AppHarborIntegrationModule to AppHarborModule, when upgrading you need to update this in your web.config
-			+ performance improvement
+			* Fixed an X-Forwarded-For header spoofing vulnerability
+			* Updates the X-Forwarded-For header properly
+			* Removed the HTTP_X_FORWARDED_PROTO header from the request
 		</releaseNotes>
 		<copyright>Copyright © 2012 Premotion Software Solutions and contributors.</copyright>
 		<tags>Premotion AspNet AppHarbor Integration</tags>
