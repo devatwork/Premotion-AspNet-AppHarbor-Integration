@@ -81,18 +81,37 @@ namespace Premotion.AspNet.AppHarbor.Integration
 			                        	if (wasReadOnly)
 			                        		setReadOnly(serverVariables, false);
 
+												// split the forwarded for header by comma+space separated list of IP addresses, the left-most being the farthest downstream client, in order to set the correct REMOTE_ADDR
+			                        	// see http://en.wikipedia.org/wiki/X-Forwarded-For
+			                        	// seealso: https://github.com/trilobyte/Premotion-AspNet-AppHarbor-Integration/issues/6
 			                        	var forwardedFor = serverVariables[ForwardedForHeaderName] ?? string.Empty;
-			                        	if (!string.IsNullOrEmpty(forwardedFor))
+												if (string.IsNullOrEmpty(forwardedFor))
+													throw new InvalidOperationException("The behavior of the AppHarbor loadbalancer changed, it no longer specifies the HTTP_X_FORWARDED_FOR header");
+			                        	var forwardSeparatorIndex = forwardedFor.LastIndexOf(ForwardedForAddressesSeparator);
+
+			                        	// if there is only one result, the HTTP_X_FORWARDED_FOR contains only the client IP
+			                        	if (forwardSeparatorIndex < 0)
 			                        	{
-			                        		// split the forwarded for header by comma+space separated list of IP addresses, the left-most being the farthest downstream client
-			                        		// if the string only contains one IP use that IP
-			                        		// see http://en.wikipedia.org/wiki/X-Forwarded-For
-			                        		var forwardSeparatorIndex = forwardedFor.IndexOf(ForwardedForAddressesSeparator, StringComparison.OrdinalIgnoreCase);
-			                        		serverVariables.Set("REMOTE_ADDR", forwardSeparatorIndex > 0 ? forwardedFor.Remove(forwardSeparatorIndex) : forwardedFor);
+			                        		// there is only address in the header which is the REMOTE_ADDR
+			                        		serverVariables.Set("REMOTE_ADDR", forwardedFor);
+
+			                        		// remove the HTTP_X_FORWARDED_FOR header because it is set by the AppHarbor loadbalancer
+			                        		serverVariables.Remove(ForwardedForHeaderName);
+			                        	}
+			                        	else
+			                        	{
+			                        		// use the right-most address as the REMOTE_ADDR, this is how any other non load-balanced web server would normally see it
+			                        		serverVariables.Set("REMOTE_ADDR", forwardedFor.Substring(forwardSeparatorIndex + ForwardedForAddressesSeparator.Length));
+
+			                        		// remove the last value from the HTTP_X_FORWARDED_FOR header, this value is added by the AppHarbor loadbalancer
+			                        		serverVariables.Set(ForwardedForHeaderName, forwardedFor.Remove(forwardSeparatorIndex));
 			                        	}
 
-			                        	// set correct headers and 
+			                        	// get the original protocol and remove the header added by the AppHarbor loadbalancer
 			                        	var protocol = serverVariables[ForwardedProtocolHeaderName] ?? string.Empty;
+			                        	serverVariables.Remove(ForwardedProtocolHeaderName);
+
+			                        	// fix the port and protocol
 			                        	var isHttps = "HTTPS".Equals(protocol, StringComparison.OrdinalIgnoreCase);
 			                        	serverVariables.Set("HTTPS", isHttps ? "on" : "off");
 			                        	serverVariables.Set("SERVER_PORT", isHttps ? "443" : "80");
