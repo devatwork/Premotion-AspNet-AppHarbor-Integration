@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
-		<version>0.1.0</version>
+		<version>0.2.0</version>
 		<authors>Premotion Software Solutions and contributors</authors>
 		<owners>Premotion Software Solutions and contributors</owners>
 		<projectUrl>https://github.com/trilobyte/Premotion-AspNet-AppHarbor-Integration</projectUrl>
@@ -15,7 +15,11 @@
 			<frameworkAssembly assemblyName="System.Core" targetFramework="net40" />
 			<frameworkAssembly assemblyName="System.Web" targetFramework="net40" />
 		</frameworkAssemblies>
-		<releaseNotes>Initial alpha release</releaseNotes>
+		<releaseNotes>
+			* Fixed an exception when the server variables collection is not read-only
+			* Renamed AppHarborIntegrationModule to AppHarborModule, when upgrading you need to update this in your web.config
+			+ performance improvement
+		</releaseNotes>
 		<copyright>Copyright © 2012 Premotion Software Solutions and contributors.</copyright>
 		<tags>Premotion AspNet AppHarbor Integration</tags>
 	</metadata>
