@@ -75,26 +75,31 @@ namespace Premotion.AspNet.AppHarbor.Integration
 			                        	// get the http context
 			                        	var serverVariables = HttpContext.Current.Request.ServerVariables;
 
-			                        	// get the forwarder headers
-			                        	var forwardedFor = serverVariables[ForwardedForHeaderName] ?? string.Empty;
-			                        	var protocol = serverVariables[ForwardedProtocolHeaderName] ?? string.Empty;
-			                        	var isHttps = "HTTPS".Equals(protocol, StringComparison.OrdinalIgnoreCase);
-
+			                        	// only unlock the collection if it was locked, otherwise an exception will be raised
+			                        	// see #5 for details
 			                        	var wasReadOnly = isReadOnly(serverVariables);
 			                        	if (wasReadOnly)
 			                        		setReadOnly(serverVariables, false);
 
-			                        	// split the forwarded for header by comma+space separated list of IP addresses, the left-most being the farthest downstream client
-			                        	// see http://en.wikipedia.org/wiki/X-Forwarded-For
-			                        	var forwardSeparatorIndex = forwardedFor.IndexOf(ForwardedForAddressesSeparator, StringComparison.OrdinalIgnoreCase);
-			                        	if (forwardSeparatorIndex > 0)
-			                        		serverVariables.Set("REMOTE_ADDR", forwardedFor.Remove(forwardSeparatorIndex));
+			                        	var forwardedFor = serverVariables[ForwardedForHeaderName] ?? string.Empty;
+			                        	if (!string.IsNullOrEmpty(forwardedFor))
+			                        	{
+			                        		// split the forwarded for header by comma+space separated list of IP addresses, the left-most being the farthest downstream client
+			                        		// if the string only contains one IP use that IP
+			                        		// see http://en.wikipedia.org/wiki/X-Forwarded-For
+			                        		var forwardSeparatorIndex = forwardedFor.IndexOf(ForwardedForAddressesSeparator, StringComparison.OrdinalIgnoreCase);
+			                        		serverVariables.Set("REMOTE_ADDR", forwardSeparatorIndex > 0 ? forwardedFor.Remove(forwardSeparatorIndex) : forwardedFor);
+			                        	}
 
-			                        	// set correct headers
+			                        	// set correct headers and 
+			                        	var protocol = serverVariables[ForwardedProtocolHeaderName] ?? string.Empty;
+			                        	var isHttps = "HTTPS".Equals(protocol, StringComparison.OrdinalIgnoreCase);
 			                        	serverVariables.Set("HTTPS", isHttps ? "on" : "off");
 			                        	serverVariables.Set("SERVER_PORT", isHttps ? "443" : "80");
 			                        	serverVariables.Set("SERVER_PORT_SECURE", isHttps ? "1" : "0");
 
+			                        	// only lock the collection if it was previously locked
+			                        	// see #5 for details
 			                        	if (wasReadOnly)
 			                        		setReadOnly(serverVariables, true);
 			                        };
