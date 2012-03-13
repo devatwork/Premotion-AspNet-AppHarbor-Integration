@@ -27,6 +27,8 @@ namespace Premotion.AspNet.AppHarbor.Integration.TestWebsite
 			output.WriteLine("Request.Url: " + request.Url);
 			output.WriteLine("Request.IsSecureConnection: " + request.IsSecureConnection);
 			output.WriteLine("Request.UserHostAddress: " + request.UserHostAddress);
+			output.WriteLine("Request.Path: " + request.Path);
+			output.WriteLine("Request.PathInfo: " + request.PathInfo);
 
 			output.WriteLine();
 			output.WriteLine();
