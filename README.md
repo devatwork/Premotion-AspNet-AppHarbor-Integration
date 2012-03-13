@@ -14,7 +14,7 @@ To set up the module properly add the following module to your web.config:
 	<system.webServer>
 		<modules>
 			<remove name="AspNetAppHarborIntegration" />
-			<add name="AspNetAppHarborIntegration" type="Premotion.AspNet.AppHarbor.Integration.AppHarborIntegrationModule, Premotion.AspNet.AppHarbor.Integration" />
+			<add name="AspNetAppHarborIntegration" type="Premotion.AspNet.AppHarbor.Integration.AppHarborModule, Premotion.AspNet.AppHarbor.Integration" />
 		</modules>
 	</system.webServer>
 
