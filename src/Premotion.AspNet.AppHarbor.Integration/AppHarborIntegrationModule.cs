@@ -44,84 +44,88 @@ namespace Premotion.AspNet.AppHarbor.Integration
 		/// Initializes a module and prepares it to handle requests.
 		/// </summary>
 		/// <param name="context">An <see cref="T:System.Web.HttpApplication"/> that provides access to the methods, properties, and events common to all application objects within an ASP.NET application </param>
-		public void Init(HttpApplication context)
+		public void Init( HttpApplication context )
 		{
 			//If we're not running on AppHarbor, do nothing.
-			var appHarborCommitId = ConfigurationManager.AppSettings[AppHarborDetectionSettingKey];
-			if (string.IsNullOrEmpty(appHarborCommitId))
+			var appHarborCommitId = ConfigurationManager.AppSettings[ AppHarborDetectionSettingKey ];
+			if ( string.IsNullOrEmpty( appHarborCommitId ) )
 				return;
 
-			var collectionType = typeof (NameValueCollection);
-			var readOnlyProperty = collectionType.GetProperty("IsReadOnly", BindingFlags.NonPublic | BindingFlags.Instance);
-			if (readOnlyProperty == null)
-				throw new InvalidOperationException(string.Format("Could not find property '{0}' on type '{1}'", "IsReadOnly", collectionType));
+			var collectionType = typeof ( NameValueCollection );
+			var readOnlyProperty = collectionType.GetProperty( "IsReadOnly", BindingFlags.NonPublic | BindingFlags.Instance );
+			if ( readOnlyProperty == null )
+				throw new InvalidOperationException( string.Format( "Could not find property '{0}' on type '{1}'", "IsReadOnly", collectionType ) );
 
-			var collectionParam = Expression.Parameter(typeof (NameValueCollection));
+			var collectionParam = Expression.Parameter( typeof ( NameValueCollection ) );
 
-			var isReadOnly = Expression.Lambda<Func<NameValueCollection, bool>>(
-				Expression.Property(collectionParam, readOnlyProperty),
+			var isReadOnly = Expression.Lambda< Func< NameValueCollection, bool > >(
+				Expression.Property( collectionParam, readOnlyProperty ),
 				collectionParam
 				).Compile();
 
-			var valueParam = Expression.Parameter(typeof (bool));
-			var setReadOnly = Expression.Lambda<Action<NameValueCollection, bool>>(
-				Expression.Call(collectionParam, readOnlyProperty.GetSetMethod(true), valueParam),
+			var valueParam = Expression.Parameter( typeof ( bool ) );
+			var setReadOnly = Expression.Lambda< Action< NameValueCollection, bool > >(
+				Expression.Call( collectionParam, readOnlyProperty.GetSetMethod( true ), valueParam ),
 				collectionParam, valueParam
 				).Compile();
 
 			// listen to incoming requests to modify
-			context.BeginRequest += (sender, args) =>
-			                        {
-			                        	// get the http context
-			                        	var serverVariables = HttpContext.Current.Request.ServerVariables;
-
-			                        	// only unlock the collection if it was locked, otherwise an exception will be raised
-			                        	// see #5 for details
-			                        	var wasReadOnly = isReadOnly(serverVariables);
-			                        	if (wasReadOnly)
-			                        		setReadOnly(serverVariables, false);
-
-												// split the forwarded for header by comma+space separated list of IP addresses, the left-most being the farthest downstream client, in order to set the correct REMOTE_ADDR
-			                        	// see http://en.wikipedia.org/wiki/X-Forwarded-For
-			                        	// seealso: https://github.com/trilobyte/Premotion-AspNet-AppHarbor-Integration/issues/6
-			                        	var forwardedFor = serverVariables[ForwardedForHeaderName] ?? string.Empty;
-												if (string.IsNullOrEmpty(forwardedFor))
-													throw new InvalidOperationException("The behavior of the AppHarbor loadbalancer changed, it no longer specifies the HTTP_X_FORWARDED_FOR header");
-			                        	var forwardSeparatorIndex = forwardedFor.LastIndexOf(ForwardedForAddressesSeparator);
-
-			                        	// if there is only one result, the HTTP_X_FORWARDED_FOR contains only the client IP
-			                        	if (forwardSeparatorIndex < 0)
+			context.BeginRequest += ( sender, args ) =>
 			                        	{
-			                        		// there is only address in the header which is the REMOTE_ADDR
-			                        		serverVariables.Set("REMOTE_ADDR", forwardedFor);
+			                        		// get the http context
+			                        		var serverVariables = HttpContext.Current.Request.ServerVariables;
 
-			                        		// remove the HTTP_X_FORWARDED_FOR header because it is set by the AppHarbor loadbalancer
-			                        		serverVariables.Remove(ForwardedForHeaderName);
-			                        	}
-			                        	else
-			                        	{
-			                        		// use the right-most address as the REMOTE_ADDR, this is how any other non load-balanced web server would normally see it
-			                        		serverVariables.Set("REMOTE_ADDR", forwardedFor.Substring(forwardSeparatorIndex + ForwardedForAddressesSeparator.Length));
+			                        		// only unlock the collection if it was locked, otherwise an exception will be raised
+			                        		// see #5 for details
+			                        		var wasReadOnly = isReadOnly( serverVariables );
+			                        		if ( wasReadOnly )
+			                        			setReadOnly( serverVariables, false );
 
-			                        		// remove the last value from the HTTP_X_FORWARDED_FOR header, this value is added by the AppHarbor loadbalancer
-			                        		serverVariables.Set(ForwardedForHeaderName, forwardedFor.Remove(forwardSeparatorIndex));
-			                        	}
+			                        		// split the forwarded for header by comma+space separated list of IP addresses, the left-most being the farthest downstream client, in order to set the correct REMOTE_ADDR
+			                        		// see http://en.wikipedia.org/wiki/X-Forwarded-For
+			                        		// seealso: https://github.com/trilobyte/Premotion-AspNet-AppHarbor-Integration/issues/6
+			                        		var forwardedFor = serverVariables[ ForwardedForHeaderName ] ?? string.Empty;
+			                        		if ( !string.IsNullOrEmpty( forwardedFor ) )
+			                        		{
+			                        			var forwardSeparatorIndex = forwardedFor.LastIndexOf( ForwardedForAddressesSeparator );
 
-			                        	// get the original protocol and remove the header added by the AppHarbor loadbalancer
-			                        	var protocol = serverVariables[ForwardedProtocolHeaderName] ?? string.Empty;
-			                        	serverVariables.Remove(ForwardedProtocolHeaderName);
+			                        			// if there is only one result, the HTTP_X_FORWARDED_FOR contains only the client IP
+			                        			if ( forwardSeparatorIndex < 0 )
+			                        			{
+			                        				// there is only address in the header which is the REMOTE_ADDR
+			                        				serverVariables.Set( "REMOTE_ADDR", forwardedFor );
 
-			                        	// fix the port and protocol
-			                        	var isHttps = "HTTPS".Equals(protocol, StringComparison.OrdinalIgnoreCase);
-			                        	serverVariables.Set("HTTPS", isHttps ? "on" : "off");
-			                        	serverVariables.Set("SERVER_PORT", isHttps ? "443" : "80");
-			                        	serverVariables.Set("SERVER_PORT_SECURE", isHttps ? "1" : "0");
+			                        				// remove the HTTP_X_FORWARDED_FOR header because it is set by the AppHarbor loadbalancer
+			                        				serverVariables.Remove( ForwardedForHeaderName );
+			                        			}
+			                        			else
+			                        			{
+			                        				// use the right-most address as the REMOTE_ADDR, this is how any other non load-balanced web server would normally see it
+			                        				serverVariables.Set( "REMOTE_ADDR", forwardedFor.Substring( forwardSeparatorIndex + ForwardedForAddressesSeparator.Length ) );
 
-			                        	// only lock the collection if it was previously locked
-			                        	// see #5 for details
-			                        	if (wasReadOnly)
-			                        		setReadOnly(serverVariables, true);
-			                        };
+			                        				// remove the last value from the HTTP_X_FORWARDED_FOR header, this value is added by the AppHarbor loadbalancer
+			                        				serverVariables.Set( ForwardedForHeaderName, forwardedFor.Remove( forwardSeparatorIndex ) );
+			                        			}
+			                        		}
+
+			                        		// get the original protocol and remove the header added by the AppHarbor loadbalancer
+			                        		var protocol = serverVariables[ ForwardedProtocolHeaderName ];
+			                        		if ( !string.IsNullOrEmpty( protocol ) )
+			                        		{
+			                        			serverVariables.Remove( ForwardedProtocolHeaderName );
+
+			                        			// fix the port and protocol
+			                        			var isHttps = "HTTPS".Equals( protocol, StringComparison.OrdinalIgnoreCase );
+			                        			serverVariables.Set( "HTTPS", isHttps ? "on" : "off" );
+			                        			serverVariables.Set( "SERVER_PORT", isHttps ? "443" : "80" );
+			                        			serverVariables.Set( "SERVER_PORT_SECURE", isHttps ? "1" : "0" );
+			                        		}
+
+			                        		// only lock the collection if it was previously locked
+			                        		// see #5 for details
+			                        		if ( wasReadOnly )
+			                        			setReadOnly( serverVariables, true );
+			                        	};
 		}
 		/// <summary>
 		/// Disposes of the resources (other than memory) used by the module that implements <see cref="T:System.Web.IHttpModule"/>.
