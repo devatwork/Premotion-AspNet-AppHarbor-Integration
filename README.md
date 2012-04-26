@@ -1,5 +1,4 @@
 # Premotion AspNet AppHarbor Integration
-*Brought to you by [Premotion Software Solutions](http://www.premotion.nl/ "Premotion Software Solutions")*
 
 This module modifies the native System.Web.HttpContext to make ASP.NET agnostic of the [AppHarbor](https://appharbor.com/ "AppHarbor") load balancing setup. You no longer need to worry about port numbers, secure connections and eaten remote IP addresses.
 
