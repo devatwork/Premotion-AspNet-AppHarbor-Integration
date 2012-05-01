@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
 	<metadata>
-		<version>0.3.0</version>
+		<version>0.4.0</version>
 		<authors>Premotion Software Solutions and contributors</authors>
 		<owners>Premotion Software Solutions and contributors</owners>
 		<projectUrl>https://github.com/trilobyte/Premotion-AspNet-AppHarbor-Integration</projectUrl>
@@ -23,9 +23,7 @@
 			<frameworkAssembly assemblyName="System.Web" targetFramework="net40" />
 		</frameworkAssemblies>
 		<releaseNotes>
-			* Fixed an X-Forwarded-For header spoofing vulnerability
-			* Updates the X-Forwarded-For header properly
-			* Removed the HTTP_X_FORWARDED_PROTO header from the request
+			* #7 Occasional unhandled exception on AppHarbor on error pages
 		</releaseNotes>
 		<copyright>Copyright © 2012 Premotion Software Solutions and contributors.</copyright>
 		<tags>Premotion AspNet AppHarbor Integration</tags>
