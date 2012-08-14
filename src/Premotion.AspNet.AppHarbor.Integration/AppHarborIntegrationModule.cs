@@ -122,6 +122,7 @@ namespace Premotion.AspNet.AppHarbor.Integration
 			                        	}
 
 			                        	// Get original IsAjax request header and attach to request.
+			                        	// see #8 for details
 			                        	var isAjaxFlag = serverVariables["HTTP_X_REQUESTED_WITH"];
 			                        	if (!string.IsNullOrEmpty(isAjaxFlag))
 			                        		serverVariables.Set("X-Requested-With", isAjaxFlag);
