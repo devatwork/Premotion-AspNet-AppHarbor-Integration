@@ -121,6 +121,13 @@ namespace Premotion.AspNet.AppHarbor.Integration
 			                        			serverVariables.Set( "SERVER_PORT_SECURE", isHttps ? "1" : "0" );
 			                        		}
 
+											// Get original IsAjax request header and attach to request.
+											var isAjaxFlag = serverVariables["HTTP_X_REQUESTED_WITH"];
+											if (!string.IsNullOrEmpty(isAjaxFlag))
+											{
+												serverVariables.Set("X-Requested-With", isAjaxFlag);
+											}
+											
 			                        		// only lock the collection if it was previously locked
 			                        		// see #5 for details
 			                        		if ( wasReadOnly )
