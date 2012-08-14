@@ -38,6 +38,12 @@ namespace Premotion.AspNet.AppHarbor.Integration.TestWebsite
 			var serverVariables = request.ServerVariables;
 			foreach (var key in serverVariables.AllKeys)
 				output.WriteLine(string.Format("{0}: {1}", key, serverVariables[key]));
+
+			// dump request headers
+			output.WriteLine("### Request headers");
+			var headerVariables = request.Headers;
+			foreach (var key in headerVariables.AllKeys)
+				output.WriteLine(string.Format("{0}: {1}", key, headerVariables[key]));
 		}
 		/// <summary>
 		/// Gets a value indicating whether another request can use the <see cref="T:System.Web.IHttpHandler"/> instance.
